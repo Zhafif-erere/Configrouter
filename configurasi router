@@ -1,1 +1,23 @@
-Persiapan AwalHubungkan kabel internet ISP ke port ether1 (WAN) dan PC ke port ether2 atau lainnya (LAN). Download Winbox dari mikrotik.com, jalankan, dan connect ke router via Neighbors tab dengan username "admin" dan password kosong . Reset konfigurasi jika perlu dengan perintah /system reset-configuration no-defaults=yes di terminal untuk mulai bersih .Atur IP Address LANBuka IP > Addresses, klik +, masukkan 192.168.88.1/24 pada interface bridge1 atau ether2, lalu Apply dan OK. Buat bridge jika belum: Bridge > + (name=bridge1), Ports > + (interface=ether2, bridge=bridge1) �. Ini memberikan akses IP lokal stabil untuk jaringan LAN .Setup DHCP ServerMasuk IP > DHCP Server > DHCP Setup, pilih interface bridge1 atau ether2. Ikuti wizard: address space 192.168.88.0/24, gateway 192.168.88.1, pool 192.168.88.2-192.168.88.254, DNS 192.168.88.1 �. Klien PC akan otomatis dapat IP dari pool ini untuk koneksi mudah .Konfigurasi Internet WANUntuk DHCP ISP: IP > DHCP Client > + (interface=ether1). Atau static: IP > Addresses + (IP dari ISP pada ether1), IP > Routes + (0.0.0.0/0 gateway IP ISP), IP > DNS set servers=8.8.8.8 . Test dengan ping 8.8.8.8 di New Terminal untuk verifikasi koneksi �.Atur NAT dan FirewallIP > Firewall > NAT > +: Chain=srcnat, Out. Interface=ether1, Action=masquerade. Ini izinkan LAN akses internet via IP publik router �. Tambah firewall dasar: IP > Firewall > Filter Rules untuk accept established/related dan drop invalid pada chain=input/forward .Keamanan TambahanSet password admin kuat via System > Users > admin > password. Disable unused services: IP > Services disable telnet,ftp,www; /tool mac-server set allowed-interface-list=LAN. Batasi akses Winbox ke LAN saja . Backup konfigurasi di Files > Backup untuk pemulihan.
+Persiapan Awal
+Hubungkan kabel internet ISP ke port ether1 (WAN) dan PC ke port ether2 atau lainnya (LAN).
+Download Winbox dari mikrotik.com, jalankan.
+connect ke router via Neighbors tab dengan username "admin" dan password kosong .
+Reset konfigurasi jika perlu dengan perintah /system reset-configuration no-defaults=yes di terminal untuk mulai bersih .
+Atur IP Address LAN
+Buka IP > Addresses, klik +, masukkan 192.168.88.1/24 pada interface bridge1 atau ether2, lalu Apply dan OK.
+Buat bridge jika belum: Bridge > + (name=bridge1), Ports > + (interface=ether2, bridge=bridge1) .
+Setup DHCP Server
+Masuk IP > DHCP Server > DHCP Setup, pilih interface bridge1 atau ether2.
+Ikuti wizard: address space 192.168.88.0/24, gateway 192.168.88.1, pool 192.168.88.2-192.168.88.254, DNS 192.168.88.1 
+Konfigurasi Internet WAN
+Untuk DHCP ISP: IP > DHCP Client > + (interface=ether1).
+Atau static: IP > Addresses + (IP dari ISP pada ether1), IP > Routes + (0.0.0.0/0 gateway IP ISP), IP > DNS set servers=8.8.8.8 .
+Test dengan ping 8.8.8.8 di New Terminal untuk verifikasi koneksi .
+Atur NAT dan Firewall
+IP > Firewall > NAT > +: Chain=srcnat, Out. Interface=ether1, Action=masquerade.
+Tambah firewall dasar: IP > Firewall > Filter Rules untuk accept established/related dan drop invalid pada chain=input/forward .
+Keamanan Tambahan
+Set password admin kuat via System > Users > admin > password.
+Disable unused services: IP > Services disable telnet,ftp,www; /tool mac-server set allowed-interface-list=LAN.
+Batasi akses Winbox ke LAN saja .
+Backup konfigurasi di Files > Backup untuk pemulihan.
